@@ -1,0 +1,375 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package BenhNhan;
+
+import static JDBC.JDBC.getJDBCConnection;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot;
+import org.jfree.data.general.DefaultPieDataset;
+
+/**
+ *
+ * @author tuant
+ */
+public class ThongKeBenhNhan extends javax.swing.JFrame {
+
+    /**
+     * Creates new form ThongKeBenhNhanForm
+     */
+    public ThongKeBenhNhan() {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        showBN();
+        showPieChart();
+    }
+    
+   private void showPieChart(){
+        
+        //create dataset
+      DefaultPieDataset barDataset = new DefaultPieDataset( );
+      barDataset.setValue("IPhone 5s" , Double.valueOf(20));  
+      barDataset.setValue("SamSung Grand" , Double.valueOf(20));   
+      barDataset.setValue("MotoG" , Double.valueOf(40));    
+      barDataset.setValue("Nokia Lumia" , Double.valueOf(10));  
+      
+      //create chart
+       JFreeChart piechart = ChartFactory.createPieChart("mobile sales",barDataset, false,true,false);//explain
+      
+        PiePlot piePlot =(PiePlot) piechart.getPlot();  
+      
+       //changing pie chart blocks colors
+       piePlot.setSectionPaint("IPhone 5s", new Color(255,255,102));
+        piePlot.setSectionPaint("SamSung Grand", new Color(102,255,102));
+        piePlot.setSectionPaint("MotoG", new Color(255,102,153));
+        piePlot.setSectionPaint("Nokia Lumia", new Color(0,204,204));
+      
+       
+        piePlot.setBackgroundPaint(Color.white);
+        
+        //create chartPanel to display chart(graph)
+        ChartPanel barChartPanel = new ChartPanel(piechart);
+        panelBarChart.removeAll();
+        panelBarChart.add(barChartPanel, BorderLayout.CENTER);
+        panelBarChart.validate();
+    }
+    
+    private void showBN(){
+        Connection con = getJDBCConnection();
+        lbTongBN.setText("0");
+        lbBNnhapvien.setText("0");
+        lbBNxuatvien.setText("0");
+        try {
+            java.sql.Statement st = con.createStatement();
+            String TongBN = "select count(MABN) from BENHNHAN";
+            java.sql.ResultSet rs = st.executeQuery(TongBN);
+            
+            if(rs.next()){
+                String a = String.valueOf(rs.getInt(1));
+                lbTongBN.setText(a);
+            }
+            
+            String BNnhap = "select count(MABN) from BENHNHAN where TINHTRANG = 'Nhập viện'";
+            rs = st.executeQuery(BNnhap);
+            if(rs.next()){
+                String b = String.valueOf(rs.getInt(1));
+                lbBNnhapvien.setText(b);
+            }
+            String BNxuat = "select count(MABN) from BENHNHAN where TINHTRANG = 'Không nhập viện'";
+            rs = st.executeQuery(BNxuat);
+            if(rs.next()){
+                String c = String.valueOf(rs.getInt(1));
+                lbBNxuatvien.setText(c);
+            }
+            
+            String DSbn = "Select MABN, TENBN, NGAYSINH, GT, GHICHU FROM BENHNHAN";
+            rs = st.executeQuery(DSbn);
+            DefaultTableModel tblModel = (DefaultTableModel) tbBN.getModel();
+            tblModel.setRowCount(0);
+            while(rs.next()){
+                String ma = rs.getString("MABN");
+                String ten = rs.getString("TENBN");
+                String ngsinh = rs.getDate("NGAYSINH").toString();
+                String gt = rs.getString("GT");
+                String note = rs.getString("GHICHU");
+                
+                String data[] = {ma, ten, ngsinh, gt, note};
+                
+                tblModel.addRow(data);
+            }
+            String DSbl = "Select MABL, TENBL, MOTA, GHICHU FROM BENHLY";
+            rs = st.executeQuery(DSbl);
+            DefaultTableModel tblModel1 = (DefaultTableModel) tbBL.getModel();
+            tblModel1.setRowCount(0);
+            while(rs.next()){
+                String ma1 = rs.getString("MABL");
+                String ten1 = rs.getString("TENBL");
+                String MOTA = rs.getString("MOTA");
+                String note1 = rs.getString("GHICHU");
+                
+                String data1[] = {ma1, ten1, MOTA, note1};
+                
+                tblModel1.addRow(data1);
+            }
+            
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(ThongKeBenhNhan.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jLabel2 = new javax.swing.JLabel();
+        scroll = new javax.swing.JScrollPane();
+        tbBN = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        lbTongBN = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        lbBNnhapvien = new javax.swing.JLabel();
+        lbBNxuatvien = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbBL = new javax.swing.JTable();
+        panelBarChart = new javax.swing.JPanel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Thống kê bệnh nhân");
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("THỐNG KÊ BỆNH NHÂN");
+        jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        tbBN.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Mã bệnh nhân", "Tên bệnh nhân", "Ngày sinh", "Giới tính", "Ghi chú"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tbBN.getTableHeader().setReorderingAllowed(false);
+        scroll.setViewportView(tbBN);
+        if (tbBN.getColumnModel().getColumnCount() > 0) {
+            tbBN.getColumnModel().getColumn(0).setResizable(false);
+            tbBN.getColumnModel().getColumn(1).setResizable(false);
+            tbBN.getColumnModel().getColumn(2).setResizable(false);
+            tbBN.getColumnModel().getColumn(3).setResizable(false);
+            tbBN.getColumnModel().getColumn(4).setResizable(false);
+        }
+
+        jLabel1.setText("Danh sách bệnh nhân đang nhập viện:");
+
+        jLabel3.setText("Tổng bệnh nhân:");
+
+        lbTongBN.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lbTongBN.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbTongBN.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel5.setText("Bệnh nhân nhập viện:");
+
+        lbBNnhapvien.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lbBNnhapvien.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbBNnhapvien.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        lbBNxuatvien.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lbBNxuatvien.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbBNxuatvien.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel8.setText("Bệnh nhân vãng lai:");
+
+        jLabel9.setText("Danh sách các bệnh lý:");
+
+        tbBL.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Mã bệnh lý", "Tên bệnh lý", "Mô tả", "Ghi chú"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tbBL.setShowGrid(false);
+        tbBL.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(tbBL);
+
+        panelBarChart.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelBarChart.setForeground(new java.awt.Color(204, 204, 204));
+        panelBarChart.setToolTipText("");
+
+        javax.swing.GroupLayout panelBarChartLayout = new javax.swing.GroupLayout(panelBarChart);
+        panelBarChart.setLayout(panelBarChartLayout);
+        panelBarChartLayout.setHorizontalGroup(
+            panelBarChartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 232, Short.MAX_VALUE)
+        );
+        panelBarChartLayout.setVerticalGroup(
+            panelBarChartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 181, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(234, 234, 234)
+                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                .addGap(215, 215, 215))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lbTongBN, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lbBNnhapvien, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(76, 76, 76)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lbBNxuatvien, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jScrollPane2)
+                            .addComponent(scroll, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(49, 49, 49)
+                .addComponent(panelBarChart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel3, jLabel5, jLabel8, lbBNnhapvien, lbBNxuatvien, lbTongBN});
+
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(4, 4, 4)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbTongBN, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbBNnhapvien, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addGap(7, 7, 7)
+                        .addComponent(lbBNxuatvien, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGap(33, 33, 33)
+                .addComponent(panelBarChart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(41, 41, 41)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(49, 49, 49)
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(92, 92, 92))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(ThongKeBenhNhan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(ThongKeBenhNhan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(ThongKeBenhNhan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(ThongKeBenhNhan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new ThongKeBenhNhan().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lbBNnhapvien;
+    private javax.swing.JLabel lbBNxuatvien;
+    private javax.swing.JLabel lbTongBN;
+    private javax.swing.JPanel panelBarChart;
+    private javax.swing.JScrollPane scroll;
+    private javax.swing.JTable tbBL;
+    private javax.swing.JTable tbBN;
+    // End of variables declaration//GEN-END:variables
+}
